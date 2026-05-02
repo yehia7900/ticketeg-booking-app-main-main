@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logging out · TicketEG</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar">
+    <a href="index.php" class="nav-logo">🎬 TicketEG</a>
+    <ul class="nav-links">
+      <li><a href="index.php">Home</a></li>
+      <li><a href="login.php">Login</a></li>
+      <li><a href="register.php" class="btn-nav-register">Register</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="main-content">
+  <div class="auth-page">
+    <div class="auth-card" style="text-align:center">
+
+      <div style="font-size:3rem;margin-bottom:1rem">🔒</div>
+
+      <h2 style="margin-bottom:.5rem">You've been logged out</h2>
+      <p class="auth-sub" style="margin-bottom:1.5rem">
+        Redirecting you to the homepage…
+      </p>
+
+      <div style="background:var(--border);border-radius:999px;height:4px;overflow:hidden;margin-bottom:1.5rem">
+        <div id="progress-bar"
+             style="height:100%;width:0%;background:var(--accent);border-radius:999px;transition:width 2s linear"></div>
+      </div>
+
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <a href="index.php" class="btn btn-primary">🏠 Go to Homepage</a>
+        <a href="login.php" class="btn btn-outline">🔑 Login Again</a>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-bottom">
+    <p>&copy; 2026 TicketEG — University Web Programming Project. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+  /* Clear localStorage session, then let PHP destroy the server session */
+  APP.clearSession();
+  window.location.replace('logout.php');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Confirmed · TicketEG</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar">
+    <a href="index.php" class="nav-logo">🎬 TicketEG</a>
+    <ul class="nav-links" id="nav-guest">
+      <li><a href="index.php">Home</a></li>
+      <li><a href="index.php">Events</a></li>
+      <li><a href="login.php">Login</a></li>
+      <li><a href="register.php" class="btn-nav-register">Register</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="main-content">
+
+  <div class="confirmation-page">
+    <div class="confirmation-card">
+
+      <!-- ✅ FORM START -->
+      <form id="confirmation-form" method="POST" action="confirmation.php" novalidate>
+
+        <div class="confirmation-icon">✓</div>
+
+        <h2>Booking Confirmed!</h2>
+        <p>Your tickets are booked. See you at the event!</p>
+
+        <div class="booking-id-badge" id="conf-id">#TKT———</div>
+
+        <table class="booking-summary-table" id="conf-table">
+          <tr><td>Event</td>      <td id="c-event">—</td></tr>
+          <tr><td>Category</td>   <td id="c-cat">—</td></tr>
+          <tr><td>Date & Time</td><td id="c-date">—</td></tr>
+          <tr><td>Venue</td>      <td id="c-venue">—</td></tr>
+          <tr><td>Seats Booked</td><td id="c-seats">—</td></tr>
+          <tr><td>Total Paid</td> <td id="c-total" style="color:var(--accent);font-size:1.05rem">—</td></tr>
+          <tr><td>Status</td>     <td><span class="badge badge-confirmed">Confirmed</span></td></tr>
+          <tr><td>Booked By</td>  <td id="c-name">—</td></tr>
+          <tr><td>Booked At</td>  <td id="c-time">—</td></tr>
+        </table>
+
+        <div style="background:var(--off-white);border-radius:var(--radius-sm);padding:1rem;
+                    font-size:.85rem;color:var(--text-muted);margin-bottom:1.5rem;text-align:left">
+          🔒 Confirmation linked to your account email.<br>
+          Please bring a valid ID to the event.
+        </div>
+
+        <div class="confirmation-actions">
+          <a href="index.php" class="btn btn-primary">🎫 Browse More Events</a>
+          <a href="profile.html" class="btn btn-outline">👤 My Bookings</a>
+        </div>
+
+      </form>
+      <!-- ✅ FORM END -->
+
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span>🎬 <strong>TicketEG</strong></span>
+      <p>Your gateway to the best events across Egypt.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+
+<!-- ❌ REMOVE THIS (it breaks everything) -->
+<!-- window.location.replace('confirmation.php' + window.location.search); -->
+
+</body>
+</html>

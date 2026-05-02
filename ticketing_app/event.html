@@ -1,0 +1,40 @@
+<aside class="booking-sidebar">
+
+  <form id="event-form" method="POST" action="event.php" novalidate>
+
+    <div class="sidebar-price">EGP 850 <span>/ ticket</span></div>
+
+    <div class="sidebar-seats">
+      <strong>2,450 seats</strong> still available
+    </div>
+
+    <div class="sidebar-info-row"><span>Date</span><strong>15 Jul 2026</strong></div>
+    <div class="sidebar-info-row"><span>Time</span><strong>9:00 PM</strong></div>
+    <div class="sidebar-info-row"><span>Venue</span><strong>Hacienda Bay Amphitheatre</strong></div>
+
+    <div class="sidebar-info-row" style="margin-top:.5rem;padding-top:.75rem;border-top:1px solid var(--border)">
+      <span>Price per ticket</span>
+      <strong style="color:var(--accent)">EGP 850.00</strong>
+    </div>
+
+    <!-- Example input (optional but useful) -->
+    <div style="margin-top:1rem">
+      <label for="seats">Seats</label>
+      <input type="number" name="seats" id="seats" value="1" min="1" max="10" class="form-control">
+    </div>
+
+    <!-- ✅ Submit button -->
+    <div style="margin-top:1.5rem">
+      <button type="submit" class="btn btn-primary btn-full">
+        🎫 Confirm Booking
+      </button>
+    </div>
+
+    <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);
+                font-size:.8rem;color:var(--text-muted);text-align:center">
+      🔒 Secure booking | Instant confirmation
+    </div>
+
+  </form>
+
+</aside>

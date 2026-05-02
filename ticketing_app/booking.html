@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Tickets · TicketEG</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<header class="site-header">
+  <nav class="navbar">
+    <a href="index.php" class="nav-logo">🎬 TicketEG</a>
+    <ul class="nav-links" id="nav-guest">
+      <li><a href="index.php">Home</a></li>
+      <li><a href="index.php">Events</a></li>
+      <li><a href="login.php">Login</a></li>
+      <li><a href="register.php" class="btn-nav-register">Register</a></li>
+    </ul>
+    <div id="nav-auth">
+      <ul class="nav-links" style="margin-right:.25rem">
+        <li><a href="index.php">Home</a></li>
+        <li><a href="index.php">Events</a></li>
+      </ul>
+      <div class="nav-search-wrap">
+        <input type="text" id="nav-search" class="nav-search-input" placeholder="Search events…">
+        <button id="nav-search-btn" class="nav-search-btn">🔍</button>
+      </div>
+      <a href="profile.html" class="nav-profile-link">
+        <span class="nav-avatar">👤</span>
+        <span id="nav-user-name"></span>
+      </a>
+      <a href="logout.php" class="btn-nav-logout">Logout</a>
+    </div>
+  </nav>
+</header>
+
+<main class="main-content">
+
+  <div class="page-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.php">Home</a><span>/</span>
+        <a href="event.php">Amr Diab Concert</a><span>/</span>
+        Book Tickets
+      </div>
+      <h1>Book Tickets</h1>
+      <p>Complete your booking for Amr Diab Live — Sahel Summer Concert</p>
+    </div>
+  </div>
+
+  <div class="booking-page">
+    <div class="container">
+      <div class="booking-grid">
+
+        <!-- Booking Form -->
+        <div class="booking-form-card">
+          <h2>🎫 Seat Selection</h2>
+  <form id="booking-form" method="POST" action="booking.php" novalidate>
+
+          <div class="form-group">
+            <label for="seats">Number of Seats</label>
+            <select name="seats" id="seats" class="form-control" onchange="calcPrice(this)">
+              <option value="1">1 seat</option>
+              <option value="2" selected>2 seats</option>
+              <option value="3">3 seats</option>
+              <option value="4">4 seats</option>
+              <option value="5">5 seats</option>
+              <option value="6">6 seats</option>
+              <option value="7">7 seats</option>
+              <option value="8">8 seats</option>
+              <option value="9">9 seats</option>
+              <option value="10">10 seats</option>
+            </select>
+            <p class="form-hint">Maximum 10 seats per order &nbsp;•&nbsp; 2,450 seats available</p>
+          </div>
+
+          <div class="price-calc">
+            <div class="price-calc-row">
+              <span>Price per ticket</span><span>EGP 850.00</span>
+            </div>
+            <div class="price-calc-row">
+              <span>Seats selected</span><span id="seats-display">2</span>
+            </div>
+            <div class="price-calc-row">
+              <span>Subtotal</span><span id="subtotal-display">EGP 1,700.00</span>
+            </div>
+            <div class="price-calc-row">
+              <span>Booking fee</span><span>Free</span>
+            </div>
+            <div class="price-calc-row total">
+              <span>Total</span><span id="total-display">EGP 1,700.00</span>
+            </div>
+          </div>
+
+          <div style="margin-top:1.5rem">
+            <button class="btn btn-primary btn-full btn-lg" onclick="confirmBooking()">
+              ✔ Confirm Booking
+            </button>
+            <a href="event.php" class="btn btn-ghost btn-full mt-1">Cancel</a>
+          </div>
+            </form>
+        </div>
+
+        <!-- Event Summary -->
+        <div class="event-summary-card">
+          <div class="event-summary-img">
+            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=75" alt="">
+          </div>
+          <div class="event-summary-body">
+            <h3>Amr Diab Live — Sahel Summer Concert</h3>
+            <div class="card-meta" style="gap:.5rem">
+              <div class="card-meta-item"><span class="icon">📅</span> Wed, 15 Jul 2026 · 9:00 PM</div>
+              <div class="card-meta-item"><span class="icon">📍</span> Hacienda Bay Amphitheatre, North Coast</div>
+              <div class="card-meta-item">
+                <span class="icon">👤</span>
+                Booked as: <strong id="booked-as" style="margin-left:.2rem"></strong>
+              </div>
+            </div>
+            <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);
+                        font-size:.82rem;color:var(--text-muted)">
+              🔒 Your payment is processed securely.<br>
+              You'll receive a booking confirmation instantly.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── Footer ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span>🎬 <strong>TicketEG</strong></span>
+      <p>Your gateway to the best events across Egypt.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.php">Home</a></li>
+        <li><a href="index.php">Events</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Categories</h4>
+      <ul>
+        <li><a href="index.php">Concerts</a></li>
+        <li><a href="index.php">Theater</a></li>
+        <li><a href="index.php">Sports</a></li>
+      </ul>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>✉ support@ticketeg.com</p>
+      <p>📞 +20 100 000 0000</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 TicketEG — University Web Programming Project. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+  function getQueryParam(name) {
+    return new URLSearchParams(window.location.search).get(name);
+  }
+
+  function redirectToBooking() {
+    var eventId = getQueryParam('id');
+    if (eventId && /^[0-9]+$/.test(eventId) && parseInt(eventId, 10) > 0) {
+      window.location.replace('booking.php?id=' + encodeURIComponent(eventId));
+    } else {
+      window.location.replace('index.php');
+    }
+  }
+
+  function confirmBooking() {
+    redirectToBooking();
+  }
+
+  /* Hand off to PHP — real booking is handled server-side with DB */
+  redirectToBooking();
+</script>
+
+</body>
+</html>

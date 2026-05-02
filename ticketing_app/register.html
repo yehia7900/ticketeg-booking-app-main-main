@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register · TicketEG</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── Navbar: register page shows ONLY Login button ── -->
+<header class="site-header">
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">🎬 TicketEG</a>
+    <ul class="nav-links">
+      <li><a href="login.html">Login</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="main-content">
+
+  <div class="auth-page">
+    <div class="auth-card">
+
+      <h2>Create an account</h2>
+      <p class="auth-sub">
+        Already have an account? <a href="login.html">Log in</a>
+      </p>
+
+      <div class="alert alert-error" id="error-summary" style="display:none">
+        ⚠ Please fix the errors below before continuing.
+      </div>
+
+      <form id="register-form" method="POST" action="register.php" novalidate>
+
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" class="form-control"
+                 placeholder="Ahmed Hassan" autocomplete="name">
+          <p class="form-error" id="name-err" style="display:none">
+            Full name is required (at least 2 characters).
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" class="form-control"
+                 placeholder="you@example.com" autocomplete="email">
+          <p class="form-error" id="email-err" style="display:none">
+            Please enter a valid email address.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-control"
+                 placeholder="At least 8 characters" autocomplete="new-password">
+          <p class="form-error" id="pw-err" style="display:none">
+            Password must be at least 8 characters.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="confirm">Confirm Password</label>
+          <input type="password" id="confirm" name="confirm_password" class="form-control"
+                 placeholder="Repeat your password" autocomplete="new-password">
+          <p class="form-error" id="confirm-err" style="display:none">
+            Passwords do not match.
+          </p>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full btn-lg">
+          Create Account
+        </button>
+
+      </form>
+
+      <p style="margin-top:1rem;font-size:.8rem;color:var(--text-muted);text-align:center">
+        By registering you agree to our Terms of Service.
+      </p>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- ── Footer ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span>🎬 <strong>TicketEG</strong></span>
+      <p>Your gateway to the best events across Egypt.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Categories</h4>
+      <ul>
+        <li><a href="index.html">Concerts</a></li>
+        <li><a href="index.html">Theater</a></li>
+        <li><a href="index.html">Sports</a></li>
+      </ul>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>✉ support@ticketeg.com</p>
+      <p>📞 +20 100 000 0000</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 TicketEG — University Web Programming Project. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+  /* Hand off to PHP — registration and error display are handled server-side */
+  window.location.replace('register.php');
+</script>
+
+</body>
+</html>

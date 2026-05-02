@@ -1,0 +1,200 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile · TicketEG</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<header class="site-header">
+  <nav class="navbar">
+    <a href="index.php" class="nav-logo">🎬 TicketEG</a>
+    <ul class="nav-links" id="nav-guest">
+      <li><a href="index.php">Home</a></li>
+      <li><a href="index.php">Events</a></li>
+      <li><a href="login.php">Login</a></li>
+      <li><a href="register.php" class="btn-nav-register">Register</a></li>
+    </ul>
+    <div id="nav-auth">
+      <ul class="nav-links" style="margin-right:.25rem">
+        <li><a href="index.php">Home</a></li>
+        <li><a href="index.php">Events</a></li>
+      </ul>
+      <div class="nav-search-wrap">
+        <input type="text" id="nav-search" class="nav-search-input" placeholder="Search events…">
+        <button id="nav-search-btn" class="nav-search-btn">🔍</button>
+      </div>
+      <a href="profile.html" class="nav-profile-link active">
+        <span class="nav-avatar">👤</span>
+        <span id="nav-user-name"></span>
+      </a>
+      <a href="logout.php" class="btn-nav-logout">Logout</a>
+    </div>
+  </nav>
+</header>
+
+<main class="main-content">
+<div class="profile-page">
+
+  <!-- Profile Hero -->
+  <div class="profile-hero">
+    <div class="container">
+      <div class="profile-hero-inner">
+        <div class="profile-avatar-lg" id="avatar-initials">👤</div>
+        <div>
+          <h1 id="profile-name">Loading…</h1>
+          <p id="profile-email">—</p>
+          <p id="profile-role" style="margin-top:.35rem;font-size:.8rem;
+             background:rgba(255,255,255,.15);display:inline-block;
+             padding:.2rem .65rem;border-radius:999px;"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Body -->
+  <div class="container">
+    <div class="profile-grid">
+
+      <!-- Left: Account Info -->
+      <div class="profile-info-card">
+        <h3>Account Info</h3>
+
+        <div class="profile-info-row">
+          <label>Full Name</label>
+          <span id="info-name">—</span>
+        </div>
+        <div class="profile-info-row">
+          <label>Email Address</label>
+          <span id="info-email">—</span>
+        </div>
+        <div class="profile-info-row">
+          <label>Account Type</label>
+          <span id="info-role">—</span>
+        </div>
+        <div class="profile-info-row">
+          <label>Total Bookings</label>
+          <span id="info-count">0</span>
+        </div>
+        <div class="profile-info-row">
+          <label>Total Spent</label>
+          <span id="info-spent">EGP 0.00</span>
+        </div>
+
+        <div style="margin-top:1.5rem">
+          <a href="logout.php" class="btn btn-danger btn-full btn-sm">Logout</a>
+        </div>
+      </div>
+
+      <!-- Right: Booking History -->
+      <div class="profile-bookings-card">
+        <h3>My Booked Events</h3>
+        <div id="bookings-list">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</main>
+
+<!-- ── Footer ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span>🎬 <strong>TicketEG</strong></span>
+      <p>Your gateway to the best events across Egypt.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.php">Home</a></li>
+        <li><a href="index.php">Events</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Categories</h4>
+      <ul>
+        <li><a href="index.php">Concerts</a></li>
+        <li><a href="index.php">Theater</a></li>
+        <li><a href="index.php">Sports</a></li>
+      </ul>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>✉ support@ticketeg.com</p>
+      <p>📞 +20 100 000 0000</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 TicketEG — University Web Programming Project. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+  /* Must be logged in */
+  if (!APP.requireLogin()) {}
+
+  APP.initNav();
+
+  var session = APP.getSession();
+  if (!session) { window.location.href = 'login.php'; }
+
+  /* ── Fill profile info ── */
+  var initials = session.name.split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
+  document.getElementById('avatar-initials').textContent = initials;
+  document.getElementById('avatar-initials').style.fontSize = '1.6rem';
+  document.getElementById('avatar-initials').style.fontWeight = '900';
+  document.getElementById('avatar-initials').style.color = '#fff';
+
+  document.getElementById('profile-name').textContent = session.name;
+  document.getElementById('profile-email').textContent = session.email;
+
+  document.getElementById('info-name').textContent  = session.name;
+  document.getElementById('info-email').textContent = session.email;
+
+  /* ── Fill bookings ── */
+  var bookings = APP.getBookings(session.email);
+  var totalSpent = bookings.reduce(function(sum, b){ return sum + (b.total || 0); }, 0);
+
+  document.getElementById('info-count').textContent = bookings.length;
+  document.getElementById('info-spent').textContent =
+    'EGP ' + totalSpent.toLocaleString('en-EG', { minimumFractionDigits: 2 });
+
+  var catIcons = { Concert: '🎵', Theater: '🎭', Sports: '⚽' };
+  var listEl = document.getElementById('bookings-list');
+
+  if (bookings.length === 0) {
+    listEl.innerHTML =
+      '<div class="no-bookings-msg">' +
+        '<h4>No bookings yet</h4>' +
+        '<p>Browse events and book your first ticket!</p>' +
+        '<a href="index.php" class="btn btn-primary mt-2" style="margin-top:1rem">Browse Events</a>' +
+      '</div>';
+  } else {
+    listEl.innerHTML = bookings.map(function (b) {
+      var icon  = catIcons[b.category] || '🎫';
+      var seats = b.seats + ' seat' + (b.seats > 1 ? 's' : '');
+      var total = 'EGP ' + (b.total || 0).toLocaleString('en-EG', { minimumFractionDigits: 2 });
+      return (
+        '<div class="booking-list-item">' +
+          '<div class="booking-list-icon">' + icon + '</div>' +
+          '<div class="booking-list-info">' +
+            '<strong>' + b.eventTitle + '</strong>' +
+            '<span>' + b.eventDate + ' · ' + seats + ' · ' + b.id + '</span>' +
+          '</div>' +
+          '<div class="booking-list-price">' + total + '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+</script>
+
+</body>
+</html>
