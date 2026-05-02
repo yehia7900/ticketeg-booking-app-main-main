@@ -81,10 +81,6 @@ require_once 'includes/header.php';
             </button>
         </form>
 
-        <div class="demo-hint">
-            <strong>Demo accounts:</strong><br>
-            User: <code>ahmed@example.com</code> / <code>user123</code>
-        </div>
     </div>
 </div>
 

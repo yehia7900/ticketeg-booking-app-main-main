@@ -87,7 +87,10 @@ $conn->query("
     ) ENGINE=InnoDB
 ");
 
-// 4b. Add photo column to users if it was not in the original schema
+// 4b. Remove the Antar & Abla event from the database if it still exists
+$conn->query("DELETE FROM events WHERE title = 'Antar & Abla — National Theatre Production'");
+
+// 4c. Add photo column to users if it was not in the original schema
 $col_check = $conn->query("
     SELECT COUNT(*) AS cnt
     FROM information_schema.columns
@@ -99,30 +102,7 @@ if ((int)$col_check->fetch_assoc()['cnt'] === 0) {
     $conn->query("ALTER TABLE users ADD COLUMN photo VARCHAR(300) DEFAULT NULL");
 }
 
-// 5. Seed default accounts when the users table is empty
-$user_count = (int)$conn->query("SELECT COUNT(*) AS cnt FROM users")->fetch_assoc()['cnt'];
-
-if ($user_count === 0) {
-    // Admin account — password: admin123
-    $admin_hash = password_hash('admin123', PASSWORD_BCRYPT);
-    $stmt = $conn->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'admin')");
-    $admin_name  = 'Admin User';
-    $admin_email = 'admin@ticketeg.com';
-    $stmt->bind_param('sss', $admin_name, $admin_email, $admin_hash);
-    $stmt->execute();
-    $stmt->close();
-
-    // Regular user account — password: user123
-    $user_hash  = password_hash('user123', PASSWORD_BCRYPT);
-    $stmt = $conn->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'user')");
-    $user_name  = 'Ahmed Hassan';
-    $user_email = 'ahmed@example.com';
-    $stmt->bind_param('sss', $user_name, $user_email, $user_hash);
-    $stmt->execute();
-    $stmt->close();
-}
-
-// 6. Seed sample events when the events table is empty
+// 5. Seed sample events when the events table is empty
 $event_count = (int)$conn->query("SELECT COUNT(*) AS cnt FROM events")->fetch_assoc()['cnt'];
 
 if ($event_count === 0) {
@@ -159,14 +139,6 @@ if ($event_count === 0) {
             'Alexandria Corniche Open Stage, Alexandria',
             350.00, 5000, 5000,
             'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800&q=80'
-        ],
-        [
-            'Antar & Abla — National Theatre Production',
-            "A breathtaking retelling of Egypt's beloved Arabic epic by the National Theatre Company.",
-            'Theater', '2026-05-30 19:30:00',
-            'El-Hanager Arts Centre, Cairo',
-            180.00, 800, 800,
-            'https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&q=80'
         ],
         [
             'Pyramids Marathon & Sports Fiesta',

@@ -130,17 +130,6 @@ VALUES
   'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800&q=80'
 ),
 (
-  'Antar & Abla — National Theatre Production',
-  'A breathtaking retelling of Egypt''s beloved Arabic epic. The National Theatre Company presents Antar & Abla in a spectacular new production combining traditional music, modern choreography, and stunning set design.',
-  'Theater',
-  '2026-05-30 19:30:00',
-  'El-Hanager Arts Centre, Cairo',
-  180.00,
-  800,
-  800,
-  'https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&q=80'
-),
-(
   'Pyramids Marathon & Sports Fiesta',
   'Run through history! The annual Pyramids Marathon takes place alongside the iconic Giza Plateau. Distances include 5K, 10K, and full marathon. After the race, enjoy a sports fiesta with live music and food stalls.',
   'Sports',
