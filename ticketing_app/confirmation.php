@@ -1,23 +1,16 @@
 <?php
 require_once 'includes/config.php';
-// config.php already starts the session
 
 // Require login
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
+if (!isset($_SESSION['user_id'])) redirect('login.php');
 
-// Read and validate the ticket ID from the URL
-$ticket_id = isset($_GET['ticket_id']) ? (int)$_GET['ticket_id'] : 0;
-if ($ticket_id <= 0) {
-    header('Location: index.php');
-    exit;
-}
+// Read and validate the ticket ID
+$ticket_id = (int)($_GET['ticket_id'] ?? 0);
+if ($ticket_id <= 0) redirect('index.php');
 
-// Fetch the ticket along with event and user details in one query
-// The WHERE clause also checks user_id so users can only view their own bookings
-$stmt = $conn->prepare('
+// Fetch ticket with event and user info joined in one query
+// The WHERE also checks user_id — users can only view their own bookings
+$ticket = db_row($conn, '
     SELECT t.id, t.quantity, t.total_price, t.status, t.booked_at,
            e.title    AS event_title,
            e.location AS location,
@@ -29,18 +22,9 @@ $stmt = $conn->prepare('
     JOIN events e ON e.id = t.event_id
     JOIN users  u ON u.id = t.user_id
     WHERE t.id = ? AND t.user_id = ?
-');
-$user_id = $_SESSION['user_id'];
-$stmt->bind_param('ii', $ticket_id, $user_id);
-$stmt->execute();
-$ticket = $stmt->get_result()->fetch_assoc();
-$stmt->close();
+', 'ii', $ticket_id, (int)$_SESSION['user_id']);
 
-// If ticket not found (or belongs to someone else), go home
-if (!$ticket) {
-    header('Location: index.php');
-    exit;
-}
+if (!$ticket) redirect('index.php');
 
 $date_fmt   = date('l, d F Y · g:i A', strtotime($ticket['event_date']));
 $booked_fmt = date('d M Y H:i',        strtotime($ticket['booked_at']));

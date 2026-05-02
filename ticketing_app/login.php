@@ -1,18 +1,14 @@
 <?php
 require_once 'includes/config.php';
-// config.php already starts the session, so no need to call session_start() here
 
-// If the user is already logged in, send them to the homepage
-if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
-    exit;
-}
+// Already logged in — nothing to do here
+if (isset($_SESSION['user_id'])) redirect('index.php');
 
 $error    = '';
-$redirect = 'index.php'; // default page to go to after login
+$redirect = 'index.php'; // where to go after a successful login
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // A hidden field in the form carries the intended destination after login
+    // A hidden form field carries the page the user was trying to reach
     $redirect = $_POST['redirect'] ?? 'index.php';
     $email    = trim($_POST['email']    ?? '');
     $password =      $_POST['password'] ?? '';
@@ -20,12 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($password)) {
         $error = 'Please fill in all fields.';
     } else {
-        // Look up the user by email
-        $stmt = $conn->prepare('SELECT id, name, password, role FROM users WHERE email = ?');
-        $stmt->bind_param('s', $email);
-        $stmt->execute();
-        $user = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
+        $user = db_row($conn,
+            'SELECT id, name, password, role FROM users WHERE email = ?',
+            's', $email
+        );
 
         if ($user && password_verify($password, $user['password'])) {
             // Regenerate session ID on login to prevent session fixation attacks
@@ -34,16 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['role']      = $user['role'];
 
-            // Admins always go to the dashboard; everyone else goes to $redirect
+            // Admins always go to the dashboard; regular users go to $redirect
             $destination = ($user['role'] === 'admin') ? 'admin/dashboard.php' : $redirect;
-            header('Location: ' . $destination);
-            exit;
+            redirect($destination);
         } else {
             $error = 'Invalid email or password. Please try again.';
         }
     }
 } else {
-    // GET request: read the redirect target from the URL if present
+    // GET request: read the intended destination from the URL
     $redirect = isset($_GET['redirect']) ? rawurldecode($_GET['redirect']) : 'index.php';
 }
 

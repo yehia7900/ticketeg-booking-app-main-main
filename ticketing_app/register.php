@@ -1,15 +1,11 @@
 <?php
 require_once 'includes/config.php';
-// config.php already starts the session
 
-// If already logged in, redirect to homepage
-if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
-    exit;
-}
+// Already logged in — send them home
+if (isset($_SESSION['user_id'])) redirect('index.php');
 
 $errors = [];
-$values = ['name' => '', 'email' => '']; // keep entered values on validation failure
+$values = ['name' => '', 'email' => '']; // repopulate form fields on error
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name     = trim($_POST['name']             ?? '');
@@ -17,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password =      $_POST['password']         ?? '';
     $confirm  =      $_POST['confirm_password'] ?? '';
 
-    // Save entered values so the form can re-fill on error
     $values = ['name' => $name, 'email' => $email];
 
     // Validate each field
@@ -31,29 +26,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['confirm']  = 'Passwords do not match.';
 
     if (empty($errors)) {
-        // Check if this email is already registered
-        $stmt = $conn->prepare('SELECT id FROM users WHERE email = ?');
-        $stmt->bind_param('s', $email);
-        $stmt->execute();
-        $stmt->store_result();
+        // Check if this email is already taken
+        $existing = db_row($conn, 'SELECT id FROM users WHERE email = ?', 's', $email);
 
-        if ($stmt->num_rows > 0) {
+        if ($existing) {
             $errors['email'] = 'An account with this email already exists.';
         } else {
-            // Hash the password before saving (never store plain text passwords)
+            // Hash the password before saving — never store plain text
             $hash = password_hash($password, PASSWORD_BCRYPT);
+            $role = 'user';
 
             $stmt = $conn->prepare('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)');
-            $role = 'user';
             $stmt->bind_param('ssss', $name, $email, $hash, $role);
             $stmt->execute();
             $stmt->close();
 
-            // Redirect to login with a success flag
-            header('Location: login.php?registered=1');
-            exit;
+            redirect('login.php?registered=1');
         }
-        $stmt->close();
     }
 }
 

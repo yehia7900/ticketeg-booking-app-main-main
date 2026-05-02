@@ -2,23 +2,14 @@
 require_once 'includes/config.php';
 
 // Require login
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
+if (!isset($_SESSION['user_id'])) redirect('login.php');
 
 $user_id = $_SESSION['user_id'];
-
-// Flash messages passed back via URL after a profile_update redirect
 $success = $_GET['success'] ?? '';
 $error   = $_GET['error']   ?? '';
 
-// Fetch the current user's data
-$stmt = $conn->prepare('SELECT * FROM users WHERE id = ?');
-$stmt->bind_param('i', $user_id);
-$stmt->execute();
-$user = $stmt->get_result()->fetch_assoc();
-$stmt->close();
+// Fetch user data
+$user = db_row($conn, 'SELECT * FROM users WHERE id = ?', 'i', $user_id);
 
 // Build initials from the user's name (e.g. "Ahmed Hassan" → "AH")
 $initials = '';
@@ -26,8 +17,8 @@ foreach (explode(' ', $user['name']) as $word) {
     $initials .= strtoupper($word[0]);
 }
 
-// Fetch all bookings for this user, including the event image
-$stmt = $conn->prepare('
+// Fetch all bookings with event details
+$bookings = db_rows($conn, '
     SELECT t.id, t.quantity, t.total_price, t.status, t.booked_at,
            e.title     AS event_title,
            e.date      AS event_date,
@@ -37,13 +28,9 @@ $stmt = $conn->prepare('
     JOIN events e ON t.event_id = e.id
     WHERE t.user_id = ?
     ORDER BY t.booked_at DESC
-');
-$stmt->bind_param('i', $user_id);
-$stmt->execute();
-$bookings = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
+', 'i', $user_id);
 
-// Calculate the total amount the user has spent
+// Total amount spent across all bookings
 $total_spent = array_sum(array_column($bookings, 'total_price'));
 
 $page_title = 'My Profile';
@@ -126,7 +113,7 @@ require_once 'includes/header.php';
                     </div>
                 </div>
 
-                <!-- Upload profile photo (separate form with action=photo) -->
+                <!-- Upload profile photo (separate form — action=photo) -->
                 <div class="booking-form-card">
                     <div class="card-header">
                         <h3>&#128247; Upload Photo</h3>
@@ -200,16 +187,12 @@ require_once 'includes/header.php';
 
                         <div class="account-info-row">
                             <span class="account-info-label">Full Name</span>
-                            <span class="account-info-value">
-                                <?= htmlspecialchars($user['name']) ?>
-                            </span>
+                            <span class="account-info-value"><?= htmlspecialchars($user['name']) ?></span>
                         </div>
 
                         <div class="account-info-row">
                             <span class="account-info-label">Email Address</span>
-                            <span class="account-info-value">
-                                <?= htmlspecialchars($user['email']) ?>
-                            </span>
+                            <span class="account-info-value"><?= htmlspecialchars($user['email']) ?></span>
                         </div>
 
                         <div class="account-info-row">
@@ -279,13 +262,6 @@ require_once 'includes/header.php';
     </div><!-- /.container -->
 </div><!-- /.profile-page -->
 
-<script>
-// Toggles a collapsible section open or closed
-function toggleSection(id, btn, openText, closeText) {
-    var el   = document.getElementById(id);
-    var open = el.classList.toggle('open');
-    btn.textContent = open ? closeText : openText;
-}
-</script>
+<script src="js/profile.js"></script>
 
 <?php require_once 'includes/footer.php'; ?>

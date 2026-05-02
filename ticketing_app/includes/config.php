@@ -190,3 +190,33 @@ if ($event_count === 0) {
     }
     $stmt->close();
 }
+
+// ── Shared helper functions (available to every PHP page) ─────
+
+// Redirect to a URL and stop the script — shorter than writing header()/exit everywhere
+function redirect($url) {
+    header('Location: ' . $url);
+    exit;
+}
+
+// Run a SELECT and return a single row as an array (or null if not found)
+// Example: $user = db_row($conn, 'SELECT * FROM users WHERE id = ?', 'i', $id);
+function db_row($conn, $sql, $types = '', ...$params) {
+    $stmt = $conn->prepare($sql);
+    if ($types !== '') $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    return $row; // null if nothing was found
+}
+
+// Run a SELECT and return all matching rows as an array of arrays
+// Example: $events = db_rows($conn, 'SELECT * FROM events ORDER BY date ASC');
+function db_rows($conn, $sql, $types = '', ...$params) {
+    $stmt = $conn->prepare($sql);
+    if ($types !== '') $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    return $rows; // empty array if nothing was found
+}

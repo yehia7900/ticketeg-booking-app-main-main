@@ -2,24 +2,12 @@
 require_once 'includes/config.php';
 
 // Read and validate the event ID from the URL
-$event_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-if ($event_id <= 0) {
-    header('Location: index.php');
-    exit;
-}
+$event_id = (int)($_GET['id'] ?? 0);
+if ($event_id <= 0) redirect('index.php');
 
-// Fetch the event from the database
-$stmt = $conn->prepare('SELECT * FROM events WHERE id = ?');
-$stmt->bind_param('i', $event_id);
-$stmt->execute();
-$event = $stmt->get_result()->fetch_assoc();
-$stmt->close();
-
-// If the event doesn't exist, go back to the homepage
-if (!$event) {
-    header('Location: index.php');
-    exit;
-}
+// Fetch the event — redirect home if it doesn't exist
+$event = db_row($conn, 'SELECT * FROM events WHERE id = ?', 'i', $event_id);
+if (!$event) redirect('index.php');
 
 // Pre-format values used in the template
 $date_fmt     = date('l, d F Y',  strtotime($event['date']));
@@ -35,7 +23,7 @@ $category_icons = [
 ];
 $icon = $category_icons[$event['category']] ?? '&#9734;';
 
-// If the user is logged in, go straight to booking; otherwise send them to login first
+// If logged in, go straight to booking; otherwise send through login first
 $book_href = isset($_SESSION['user_id'])
     ? 'booking.php?id=' . $event['id']
     : 'login.php?redirect=' . urlencode('booking.php?id=' . $event['id']);

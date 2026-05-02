@@ -2,10 +2,7 @@
 require_once 'includes/config.php';
 
 // Require login
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
+if (!isset($_SESSION['user_id'])) redirect('login.php');
 
 $user_id = (int)$_SESSION['user_id'];
 $action  = $_POST['action'] ?? '';
@@ -21,15 +18,10 @@ if ($action === 'profile') {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL))
         $errors[] = 'Please enter a valid email address.';
 
+    // Check the email is not already used by a different account
     if (empty($errors)) {
-        // Make sure the email is not already used by a different account
-        $stmt = $conn->prepare('SELECT id FROM users WHERE email = ? AND id != ?');
-        $stmt->bind_param('si', $email, $user_id);
-        $stmt->execute();
-        $stmt->store_result();
-        if ($stmt->num_rows > 0)
-            $errors[] = 'That email is already used by another account.';
-        $stmt->close();
+        $taken = db_row($conn, 'SELECT id FROM users WHERE email = ? AND id != ?', 'si', $email, $user_id);
+        if ($taken) $errors[] = 'That email is already used by another account.';
     }
 
     if (empty($errors)) {
@@ -38,15 +30,12 @@ if ($action === 'profile') {
         $stmt->execute();
         $stmt->close();
 
-        // Update the session name so the navbar reflects the change immediately
+        // Update the navbar display name immediately
         $_SESSION['user_name'] = $name;
-
-        header('Location: profile.php?success=profile');
-        exit;
+        redirect('profile.php?success=profile');
     }
 
-    header('Location: profile.php?error=' . urlencode(implode(' ', $errors)));
-    exit;
+    redirect('profile.php?error=' . urlencode(implode(' ', $errors)));
 }
 
 // ── Action: change password ──────────────────────────────────
@@ -56,21 +45,13 @@ if ($action === 'password') {
     $confirm = $_POST['confirm_password'] ?? '';
 
     $errors = [];
-    if (empty($current))
-        $errors[] = 'Current password is required.';
-    if (strlen($new_pw) < 8)
-        $errors[] = 'New password must be at least 8 characters.';
-    if ($new_pw !== $confirm)
-        $errors[] = 'Passwords do not match.';
+    if (empty($current))       $errors[] = 'Current password is required.';
+    if (strlen($new_pw) < 8)   $errors[] = 'New password must be at least 8 characters.';
+    if ($new_pw !== $confirm)  $errors[] = 'Passwords do not match.';
 
+    // Verify the current password against the stored hash
     if (empty($errors)) {
-        // Fetch the stored hash to verify the current password
-        $stmt = $conn->prepare('SELECT password FROM users WHERE id = ?');
-        $stmt->bind_param('i', $user_id);
-        $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
-
+        $row = db_row($conn, 'SELECT password FROM users WHERE id = ?', 'i', $user_id);
         if (!password_verify($current, $row['password']))
             $errors[] = 'Current password is incorrect.';
     }
@@ -81,13 +62,10 @@ if ($action === 'password') {
         $stmt->bind_param('si', $hash, $user_id);
         $stmt->execute();
         $stmt->close();
-
-        header('Location: profile.php?success=password');
-        exit;
+        redirect('profile.php?success=password');
     }
 
-    header('Location: profile.php?error=' . urlencode(implode(' ', $errors)));
-    exit;
+    redirect('profile.php?error=' . urlencode(implode(' ', $errors)));
 }
 
 // ── Action: upload profile photo ─────────────────────────────
@@ -101,7 +79,7 @@ if ($action === 'photo') {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         $max_size      = 5 * 1024 * 1024; // 5 MB
 
-        // Use finfo to check the actual file type (not just the extension)
+        // Check the actual MIME type, not just the file extension
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime  = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
@@ -112,28 +90,18 @@ if ($action === 'photo') {
             $errors[] = 'Image must be smaller than 5 MB.';
         } else {
             $upload_dir = __DIR__ . '/uploads/';
-            if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0755, true);
-            }
+            if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
 
-            // Build a unique filename so uploads never overwrite each other
+            // Unique filename prevents overwrites
             $ext      = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
             $filename = 'user_' . $user_id . '_' . time() . '.' . $ext;
-            $dest     = $upload_dir . $filename;
 
-            if (move_uploaded_file($file['tmp_name'], $dest)) {
-                // Delete the previous photo file if one exists
-                $stmt = $conn->prepare('SELECT photo FROM users WHERE id = ?');
-                $stmt->bind_param('i', $user_id);
-                $stmt->execute();
-                $old_row = $stmt->get_result()->fetch_assoc();
-                $stmt->close();
-
-                if (!empty($old_row['photo'])) {
-                    $old_path = __DIR__ . '/' . $old_row['photo'];
-                    if (file_exists($old_path)) {
-                        unlink($old_path);
-                    }
+            if (move_uploaded_file($file['tmp_name'], $upload_dir . $filename)) {
+                // Delete the old photo file if one exists
+                $old = db_row($conn, 'SELECT photo FROM users WHERE id = ?', 'i', $user_id);
+                if (!empty($old['photo'])) {
+                    $old_path = __DIR__ . '/' . $old['photo'];
+                    if (file_exists($old_path)) unlink($old_path);
                 }
 
                 // Save the new photo path to the database
@@ -143,18 +111,15 @@ if ($action === 'photo') {
                 $stmt->execute();
                 $stmt->close();
 
-                header('Location: profile.php?success=photo');
-                exit;
+                redirect('profile.php?success=photo');
             } else {
                 $errors[] = 'Upload failed. Please try again.';
             }
         }
     }
 
-    header('Location: profile.php?error=' . urlencode(implode(' ', $errors)));
-    exit;
+    redirect('profile.php?error=' . urlencode(implode(' ', $errors)));
 }
 
 // Unknown action — go back to profile
-header('Location: profile.php');
-exit;
+redirect('profile.php');
