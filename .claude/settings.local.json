@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(Remove-Item -Path \"c:\\\\xampp\\\\htdocs\\\\ticketeg-booking-app-main-main\\\\ticketing_app\\\\views\" -Recurse -Force)"
-    ]
-  }
-}
