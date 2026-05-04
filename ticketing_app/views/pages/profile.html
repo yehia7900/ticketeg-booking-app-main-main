@@ -1,0 +1,104 @@
+<div class="profile-page">
+    <div class="profile-hero">
+        <div class="container">
+            <div class="profile-hero-inner">
+                <div class="profile-avatar-lg">
+                    <?php if (!empty($user['photo'])): ?>
+                        <img src="<?= e($user['photo']) ?>" alt="Profile photo">
+                    <?php else: ?>
+                        <?= e($initials) ?>
+                    <?php endif; ?>
+                </div>
+                <div>
+                    <h1><?= e($user['name']) ?></h1>
+                    <p><?= e($user['email']) ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <?php if ($success === 'profile'): ?><div class="alert alert-success">&#10003; Profile updated successfully.</div><?php endif; ?>
+        <?php if ($success === 'password'): ?><div class="alert alert-success">&#10003; Password updated successfully.</div><?php endif; ?>
+        <?php if ($success === 'photo'): ?><div class="alert alert-success">&#10003; Photo uploaded successfully.</div><?php endif; ?>
+        <?php if ($error): ?><div class="alert alert-error">&#9888; <?= e($error) ?></div><?php endif; ?>
+
+        <div class="profile-edit-grid">
+            <div class="profile-left-col">
+                <div class="booking-form-card">
+                    <div class="card-header">
+                        <h3>&#9998; Edit Profile</h3>
+                        <button type="button" data-toggle-section="edit-section" data-open-text="Edit Profile" data-close-text="Cancel">Edit Profile</button>
+                    </div>
+                    <div id="edit-section" class="card-section">
+                        <form method="POST" action="profile_update.php">
+                            <input type="hidden" name="action" value="profile">
+                            <div class="form-group"><label for="profile-name">Full Name</label><input type="text" id="profile-name" name="name" class="form-control" value="<?= e($user['name']) ?>" required></div>
+                            <div class="form-group"><label for="profile-email">Email Address</label><input type="email" id="profile-email" name="email" class="form-control" value="<?= e($user['email']) ?>" required></div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="booking-form-card">
+                    <div class="card-header">
+                        <h3>&#128247; Upload Photo</h3>
+                        <button type="button" data-toggle-section="photo-section" data-open-text="Change Photo" data-close-text="Cancel">Change Photo</button>
+                    </div>
+                    <div id="photo-section" class="card-section">
+                        <form method="POST" action="profile_update.php" enctype="multipart/form-data">
+                            <input type="hidden" name="action" value="photo">
+                            <div class="form-group"><label for="photo-file">Choose Image (JPG, PNG, GIF, WEBP - max 5 MB)</label><input type="file" id="photo-file" name="photo" class="form-control" accept="image/*" required></div>
+                            <button type="submit" class="btn btn-primary">Upload Photo</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="booking-form-card">
+                    <div class="card-header">
+                        <h3>&#128274; Change Password</h3>
+                        <button type="button" data-toggle-section="pw-section" data-open-text="Change Password" data-close-text="Cancel">Change Password</button>
+                    </div>
+                    <div id="pw-section" class="card-section">
+                        <form method="POST" action="profile_update.php">
+                            <input type="hidden" name="action" value="password">
+                            <div class="form-group"><label for="current-password">Current Password</label><input type="password" id="current-password" name="current_password" class="form-control" required></div>
+                            <div class="form-group"><label for="new-password">New Password</label><input type="password" id="new-password" name="new_password" class="form-control" required></div>
+                            <div class="form-group"><label for="confirm-password">Confirm New Password</label><input type="password" id="confirm-password" name="confirm_password" class="form-control" required></div>
+                            <button type="submit" class="btn btn-primary">Update Password</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="booking-form-card">
+                    <h3>Account Stats</h3>
+                    <p>Total bookings: <strong><?= count($bookings) ?></strong></p>
+                    <p>Total spent: <strong>EGP <?= number_format((float)$total_spent, 2) ?></strong></p>
+                    <a href="logout.php" class="btn btn-danger mt-2">Logout</a>
+                </div>
+            </div>
+
+            <div class="event-summary-card">
+                <h3>&#127915; My Bookings</h3>
+                <?php if (!$bookings): ?>
+                    <p>No bookings yet. <a href="index.php">Browse events</a></p>
+                <?php else: ?>
+                    <?php foreach ($bookings as $booking): ?>
+                        <?php $thumb = $booking['image_url'] ?: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=200&q=80'; ?>
+                        <div class="profile-booking-row">
+                            <img src="<?= e($thumb) ?>" alt="<?= e($booking['event_title']) ?>">
+                            <div>
+                                <strong><?= e($booking['event_title']) ?></strong><br>
+                                <?= e(date('d M Y', strtotime($booking['event_date']))) ?> &bull;
+                                <?= (int)$booking['quantity'] ?> seat<?= $booking['quantity'] > 1 ? 's' : '' ?>
+                            </div>
+                            <div>EGP <?= number_format((float)$booking['total_price'], 2) ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/profile.js"></script>

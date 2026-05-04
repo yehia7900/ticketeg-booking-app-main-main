@@ -1,0 +1,82 @@
+<div class="page-hero">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="index.php">Home</a><span>/</span>
+            <a href="index.php?category=<?= urlencode($event['category']) ?>"><?= e($event['category']) ?></a><span>/</span>
+            <?= e($event['title']) ?>
+        </div>
+        <h1><?= e($event['title']) ?></h1>
+        <p><?= category_icon($event['category']) ?> <?= e($event['category']) ?> | <?= e($event['location']) ?></p>
+    </div>
+</div>
+
+<div class="event-detail">
+    <div class="container">
+        <div class="event-detail-grid">
+            <div>
+                <div class="event-image-large">
+                    <img src="<?= e($image_url) ?>" alt="<?= e($event['title']) ?>">
+                </div>
+
+                <div class="event-info mt-3">
+                    <h1><?= e($event['title']) ?></h1>
+                    <ul class="event-meta-list mt-2">
+                        <li class="event-meta-row">
+                            <div class="meta-icon">&#128197;</div>
+                            <div class="meta-text"><strong><?= e($date_fmt) ?></strong><span>Doors open: <?= e($time_fmt) ?></span></div>
+                        </li>
+                        <li class="event-meta-row">
+                            <div class="meta-icon">&#127968;</div>
+                            <div class="meta-text"><strong><?= e($event['location']) ?></strong><span>Event venue</span></div>
+                        </li>
+                        <li class="event-meta-row">
+                            <div class="meta-icon">&#127917;</div>
+                            <div class="meta-text"><strong><?= e($event['category']) ?></strong><span>Event type</span></div>
+                        </li>
+                        <li class="event-meta-row">
+                            <div class="meta-icon">&#129686;</div>
+                            <div class="meta-text">
+                                <strong class="<?= $is_low_stock ? 'text-danger' : 'text-success' ?>"><?= (int)$event['available_seats'] ?> seats available</strong>
+                                <span>of <?= (int)$event['total_seats'] ?> total</span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3 class="minor-title">About This Event</h3>
+                    <p class="event-description"><?= nl2br(e($event['description'])) ?></p>
+                </div>
+            </div>
+
+            <aside class="booking-sidebar">
+                <div class="sidebar-price">EGP <?= number_format((float)$event['price'], 0) ?> <span>/ ticket</span></div>
+                <div class="sidebar-seats <?= $is_low_stock ? 'low' : '' ?>">
+                    <?php if ((int)$event['available_seats'] === 0): ?>
+                        <strong>Sold Out</strong>
+                    <?php elseif ($is_low_stock): ?>
+                        &#128293; Only <strong><?= (int)$event['available_seats'] ?> seats</strong> left!
+                    <?php else: ?>
+                        <strong><?= (int)$event['available_seats'] ?> seats</strong> available
+                    <?php endif; ?>
+                </div>
+
+                <div class="sidebar-info-row"><span>Date</span><strong><?= e(date('d M Y', strtotime($event['date']))) ?></strong></div>
+                <div class="sidebar-info-row"><span>Time</span><strong><?= e($time_fmt) ?></strong></div>
+                <div class="sidebar-info-row"><span>Location</span><strong><?= e($event['location']) ?></strong></div>
+                <div class="sidebar-info-row sidebar-total"><span>Price per ticket</span><strong>EGP <?= number_format((float)$event['price'], 2) ?></strong></div>
+
+                <div class="mt-3">
+                    <?php if ((int)$event['available_seats'] === 0): ?>
+                        <button class="btn btn-ghost btn-full" disabled>Sold Out</button>
+                    <?php else: ?>
+                        <a href="<?= e($book_href) ?>" class="btn btn-primary btn-full btn-lg">&#127917; Book Now</a>
+                        <?php if (!isset($_SESSION['user_id'])): ?>
+                            <p class="text-center text-muted mt-1 small-note"><a href="login.php">Log in</a> to book tickets.</p>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
+
+                <div class="secure-note">&#128274; Secure booking | Instant confirmation</div>
+            </aside>
+        </div>
+    </div>
+</div>

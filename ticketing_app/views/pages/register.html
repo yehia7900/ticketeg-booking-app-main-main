@@ -1,0 +1,36 @@
+<div class="auth-page">
+    <div class="auth-card">
+        <h2>Create an account</h2>
+        <p class="auth-sub">Already have an account? <a href="login.php">Log in</a></p>
+
+        <form method="POST" action="register.php" novalidate>
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" class="form-control" value="<?= e($values['name']) ?>" placeholder="Ahmed Hassan" required>
+                <?php if (!empty($errors['name'])): ?><p class="form-error"><?= e($errors['name']) ?></p><?php endif; ?>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" value="<?= e($values['email']) ?>" placeholder="you@example.com" required>
+                <?php if (!empty($errors['email'])): ?><p class="form-error"><?= e($errors['email']) ?></p><?php endif; ?>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="At least 8 characters" required>
+                <?php if (!empty($errors['password'])): ?><p class="form-error"><?= e($errors['password']) ?></p><?php endif; ?>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Repeat your password" required>
+                <?php if (!empty($errors['confirm'])): ?><p class="form-error"><?= e($errors['confirm']) ?></p><?php endif; ?>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full btn-lg">Create Account</button>
+        </form>
+
+        <p class="terms-note">By registering you agree to our Terms of Service.</p>
+    </div>
+</div>

@@ -1,3 +1,4 @@
 <?php
-// db.php — kept for compatibility; all logic is in config.php
+declare(strict_types=1);
+
 require_once __DIR__ . '/config.php';

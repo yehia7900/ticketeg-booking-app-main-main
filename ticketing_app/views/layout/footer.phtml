@@ -1,42 +1,35 @@
-</main><!-- /.main-content -->
-
+</main>
 <footer class="site-footer">
     <div class="footer-inner">
-
         <div class="footer-brand">
             <span class="logo-icon">&#127916;</span> <strong>TicketEG</strong>
             <p>Your gateway to the best events across Egypt.</p>
         </div>
-
         <div class="footer-links">
             <h4>Quick Links</h4>
             <ul>
-                <li><a href="<?= $base ?>index.php">Home</a></li>
-                <li><a href="<?= $base ?>login.php">Login</a></li>
-                <li><a href="<?= $base ?>register.php">Register</a></li>
+                <li><a href="<?= e($base ?? '') ?>index.php">Home</a></li>
+                <li><a href="<?= e($base ?? '') ?>login.php">Login</a></li>
+                <li><a href="<?= e($base ?? '') ?>register.php">Register</a></li>
             </ul>
         </div>
-
         <div class="footer-links">
             <h4>Categories</h4>
             <ul>
-                <li><a href="<?= $base ?>index.php?category=Concert">Concerts</a></li>
-                <li><a href="<?= $base ?>index.php?category=Theater">Theater</a></li>
-                <li><a href="<?= $base ?>index.php?category=Sports">Sports</a></li>
+                <li><a href="<?= e($base ?? '') ?>index.php?category=Concert">Concerts</a></li>
+                <li><a href="<?= e($base ?? '') ?>index.php?category=Theater">Theater</a></li>
+                <li><a href="<?= e($base ?? '') ?>index.php?category=Sports">Sports</a></li>
             </ul>
         </div>
-
         <div class="footer-contact">
             <h4>Contact</h4>
             <p>&#9993; support@ticketeg.com</p>
             <p>&#128222; +20 100 000 0000</p>
         </div>
-
     </div>
     <div class="footer-bottom">
-        <p>&copy; <?= date('Y') ?> TicketEG — University Web Programming Project. All rights reserved.</p>
+        <p>&copy; <?= date('Y') ?> TicketEG - University Web Programming Project. All rights reserved.</p>
     </div>
 </footer>
-
 </body>
 </html>
