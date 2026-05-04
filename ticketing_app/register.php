@@ -1,21 +1,19 @@
 <?php
-declare(strict_types=1);
-
 require_once __DIR__ . '/includes/config.php';
 
 if (isset($_SESSION['user_id'])) {
     redirect('index.php');
 }
 
-$errors = [];
-$values = ['name' => '', 'email' => ''];
+$errors = array();
+$values = array('name' => '', 'email' => '');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $confirm = $_POST['confirm_password'] ?? '';
-    $values = ['name' => $name, 'email' => $email];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+    $confirm = $_POST['confirm_password'];
+    $values = array('name' => $name, 'email' => $email);
 
     if (strlen($name) < 2) {
         $errors['name'] = 'Full name must be at least 2 characters.';
@@ -26,29 +24,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (strlen($password) < 8) {
         $errors['password'] = 'Password must be at least 8 characters.';
     }
-    if ($password !== $confirm) {
+    if ($password != $confirm) {
         $errors['confirm'] = 'Passwords do not match.';
     }
 
-    if (!$errors && db_row($conn, 'SELECT id FROM users WHERE email = ?', 's', $email)) {
+    $safe_email = clean($email);
+    if (!$errors && get_one("SELECT id FROM users WHERE email = '$safe_email'")) {
         $errors['email'] = 'An account with this email already exists.';
     }
 
     if (!$errors) {
         $hash = password_hash($password, PASSWORD_BCRYPT);
         $role = 'user';
-        $stmt = $conn->prepare('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)');
-        $stmt->bind_param('ssss', $name, $email, $hash, $role);
-        $stmt->execute();
-        $stmt->close();
+        $sql = "INSERT INTO users (name, email, password, role)
+                VALUES ('" . clean($name) . "', '" . clean($email) . "', '" . clean($hash) . "', '$role')";
+        mysqli_query($conn, $sql);
 
         redirect('login.php?registered=1');
     }
 }
 
-render_page('pages/register', [
+render_page('pages/register', array(
     'page_title' => 'Register',
     'auth_page' => true,
     'errors' => $errors,
-    'values' => $values,
-]);
+    'values' => $values
+));

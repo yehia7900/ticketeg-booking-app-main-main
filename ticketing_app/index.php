@@ -1,17 +1,21 @@
 <?php
-declare(strict_types=1);
-
 require_once __DIR__ . '/includes/config.php';
 
-$allowed_categories = ['Concert', 'Theater', 'Sports', 'Other'];
-$category = in_array(($_GET['category'] ?? ''), $allowed_categories, true) ? $_GET['category'] : null;
+$allowed_categories = array('Concert', 'Theater', 'Sports', 'Other');
+$category = null;
 
-$events = $category
-    ? db_rows($conn, 'SELECT * FROM events WHERE available_seats > 0 AND category = ? ORDER BY date ASC', 's', $category)
-    : db_rows($conn, 'SELECT * FROM events WHERE available_seats > 0 ORDER BY date ASC');
+if (isset($_GET['category']) && in_array($_GET['category'], $allowed_categories)) {
+    $category = $_GET['category'];
+}
 
-render_page('pages/home', [
+if ($category) {
+    $events = get_all("SELECT * FROM events WHERE available_seats > 0 AND category = '" . clean($category) . "' ORDER BY date ASC");
+} else {
+    $events = get_all('SELECT * FROM events WHERE available_seats > 0 ORDER BY date ASC');
+}
+
+render_page('pages/home', array(
     'page_title' => 'Home',
     'category' => $category,
-    'events' => $events,
-]);
+    'events' => $events
+));

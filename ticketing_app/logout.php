@@ -1,9 +1,7 @@
 <?php
-declare(strict_types=1);
-
 require_once __DIR__ . '/includes/config.php';
 
-$_SESSION = [];
+$_SESSION = array();
 session_destroy();
 
 redirect('login.php');
